@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace UnitCopyPaste
 {
-    [BepInPlugin("com.yuulf.unitcopypaste", "UnitCopyPaste", "2.0.0")]
+    [BepInPlugin("com.noms.unitcopypaste", "UnitCopyPaste", "1.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource Log;
@@ -17,11 +17,11 @@ namespace UnitCopyPaste
         void Awake()
         {
             Log = Logger;
-            harmony = new Harmony("com.yuulf.unitcopypaste");
+            harmony = new Harmony("com.noms.unitcopypaste");
             harmony.PatchAll();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
-            Logger.LogInfo("UnitCopyPaste v2.0.0 loaded");
+            Logger.LogInfo("UnitCopyPaste v1.0.0 loaded");
         }
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
