@@ -232,8 +232,7 @@ namespace UnitCopyPaste
 
                     GlobalPosition gpos = new GlobalPosition(worldPos);
 
-                    string uniqueName = definition.unitPrefab.name + "_UCP" +
-                        (++_spawnCounter) + "_" + DateTime.Now.Ticks.ToString("X");
+                    string uniqueName = definition.unitPrefab.name + "_UCP" + (++_spawnCounter);
 
                     Log.LogInfo($"[UCP] Calling SpawnFromUnitDefinitionInEditor name={uniqueName}");
                     Unit unit = spawner.SpawnFromUnitDefinitionInEditor(

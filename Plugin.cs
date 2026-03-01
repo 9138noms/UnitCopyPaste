@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace UnitCopyPaste
 {
-    [BepInPlugin("com.noms.unitcopypaste", "UnitCopyPaste", "1.0.0")]
+    [BepInPlugin("com.noms.unitcopypaste", "UnitCopyPaste", "2.1.0")]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource Log;
@@ -21,7 +21,7 @@ namespace UnitCopyPaste
             harmony.PatchAll();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
-            Logger.LogInfo("UnitCopyPaste v1.0.0 loaded");
+            Logger.LogInfo("UnitCopyPaste v2.1.0 loaded");
         }
 
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -69,16 +69,19 @@ namespace UnitCopyPaste
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+C pressed");
                 GroupCopyPaste.CopySelectedGroup();
+                Input.ResetInputAxes();
             }
             else if (Input.GetKeyDown(KeyCode.V))
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+V pressed");
                 GroupCopyPaste.PasteGroupAtCursor();
+                Input.ResetInputAxes();
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+D pressed");
                 GroupCopyPaste.DuplicateInPlace();
+                Input.ResetInputAxes();
             }
         }
     }
