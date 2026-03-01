@@ -69,20 +69,18 @@ namespace UnitCopyPaste
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+C pressed");
                 GroupCopyPaste.CopySelectedGroup();
-                Input.ResetInputAxes();
             }
             else if (Input.GetKeyDown(KeyCode.V))
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+V pressed");
                 GroupCopyPaste.PasteGroupAtCursor();
-                Input.ResetInputAxes();
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
                 Plugin.Log.LogInfo("[UCP] Ctrl+D pressed");
                 GroupCopyPaste.DuplicateInPlace();
-                Input.ResetInputAxes();
             }
         }
     }
+
 }
