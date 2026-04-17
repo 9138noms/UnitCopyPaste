@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BepInEx.Logging;
 using NuclearOption.MissionEditorScripts;
 using NuclearOption.SavedMission;
+using NuclearOption.SavedMission.ObjectiveV2;
 using UnityEngine;
 
 namespace UnitCopyPaste
@@ -183,6 +184,16 @@ namespace UnitCopyPaste
 
             var spawnedUnits = new List<Unit>();
 
+            // Build set of names already in the mission so generated names don't collide.
+            // Without this, _spawnCounter resets across game restarts and paste produces
+            // names that duplicate previously-saved units — missions then fail to load.
+            var usedNames = new HashSet<string>();
+            foreach (var existing in MissionManager.GetAllSavedUnits(mission, includeBuiltIn: true))
+            {
+                if (!string.IsNullOrEmpty(existing.UniqueName))
+                    usedNames.Add(existing.UniqueName);
+            }
+
             foreach (var data in GroupClipboard.Items)
             {
                 try
@@ -233,6 +244,8 @@ namespace UnitCopyPaste
                     GlobalPosition gpos = new GlobalPosition(worldPos);
 
                     string uniqueName = definition.unitPrefab.name + "_UCP" + (++_spawnCounter);
+                    SaveHelper.MakeUnique(ref uniqueName, usedNames, warn: false);
+                    usedNames.Add(uniqueName);
 
                     Log.LogInfo($"[UCP] Calling SpawnFromUnitDefinitionInEditor name={uniqueName}");
                     Unit unit = spawner.SpawnFromUnitDefinitionInEditor(
