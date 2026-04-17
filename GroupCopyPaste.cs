@@ -113,24 +113,29 @@ namespace UnitCopyPaste
             }
 
             Vector3 hitPoint;
+            Plane waterPlane = new Plane(Vector3.up, new Vector3(0, Datum.LocalSeaY, 0));
             if (Physics.Raycast(ray, out RaycastHit hit, 100000f))
             {
                 hitPoint = hit.point;
+                // Over water the ray hits the seabed, not the water surface.
+                // Snap up to the water plane so ships/floating buildings don't
+                // spawn submerged.
+                if (hitPoint.y < Datum.LocalSeaY && waterPlane.Raycast(ray, out float seaEnter))
+                {
+                    hitPoint = ray.GetPoint(seaEnter);
+                    Log.LogInfo($"[UCP] Seabed hit below sea level, snapping to water at {hitPoint}");
+                }
+            }
+            else if (waterPlane.Raycast(ray, out float enter))
+            {
+                // No terrain hit — try water plane for over-sea pasting
+                hitPoint = ray.GetPoint(enter);
+                Log.LogInfo($"[UCP] No terrain, using water plane at {hitPoint}");
             }
             else
             {
-                // No terrain hit — try water plane for over-sea pasting
-                Plane waterPlane = new Plane(Vector3.up, new Vector3(0, Datum.LocalSeaY, 0));
-                if (waterPlane.Raycast(ray, out float enter))
-                {
-                    hitPoint = ray.GetPoint(enter);
-                    Log.LogInfo($"[UCP] No terrain, using water plane at {hitPoint}");
-                }
-                else
-                {
-                    Log.LogWarning("[UCP] Raycast missed — no terrain or water under cursor");
-                    return;
-                }
+                Log.LogWarning("[UCP] Raycast missed — no terrain or water under cursor");
+                return;
             }
 
             Vector3 pasteCenter = hitPoint + originOffset;
@@ -233,14 +238,6 @@ namespace UnitCopyPaste
                     Log.LogInfo($"[UCP] FactionHQ={factionHQ?.name ?? "null"}");
 
                     Vector3 worldPos = pasteCenter + data.RelativeOffset;
-
-                    // Ships: raise 35m above so they drop onto water surface
-                    if (definition is ShipDefinition)
-                    {
-                        worldPos.y += 35f;
-                        Log.LogInfo("[UCP] Ship detected, raised +35m for water drop");
-                    }
-
                     GlobalPosition gpos = new GlobalPosition(worldPos);
 
                     string uniqueName = definition.unitPrefab.name + "_UCP" + (++_spawnCounter);
